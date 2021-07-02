@@ -1,0 +1,36 @@
+{
+  "name": "jastmm",
+  "version": "0.1.0",
+  "description": "Just another scheme to make money (legally through the power of investing!)",
+  "main": "index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GitThePower/JASTMM.git"
+  },
+  "author": "Henry Power",
+  "license": "None",
+  "bugs": {
+    "url": "https://github.com/GitThePower/JASTMM/issues"
+  },
+  "homepage": "https://github.com/GitThePower/JASTMM#readme",
+  "devDependencies": {
+    "@aws-cdk/assert": "1.111.0",
+    "@types/jest": "^26.0.10",
+    "@types/node": "10.17.27",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.2.0",
+    "typescript": "~3.9.7"
+  },
+  "peerDependencies": {
+    "@aws-cdk/core": "1.111.0"
+  },
+  "dependencies": {
+    "@aws-cdk/core": "1.111.0"
+  }
+}
