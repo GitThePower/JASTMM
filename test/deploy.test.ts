@@ -1,15 +1,15 @@
+import { App, Stack } from '@aws-cdk/core';
+import { Jastmm } from '../lib';
 import { expect as expectCDK, countResources } from '@aws-cdk/assert';
-import * as cdk from '@aws-cdk/core';
-import * as Deploy from '../lib/index';
 
-/*
- * Example test
- */
+const app = new App();
+let stack: Stack;
+
+beforeAll(() => {
+});
+
 test('SNS Topic Created', () => {
-  const app = new cdk.App();
-  const stack = new cdk.Stack(app, "TestStack");
-  // WHEN
-  new Deploy.Deploy(stack, 'MyTestConstruct');
-  // THEN
+  stack = new Jastmm(app, 'TestStack')
+  
   expectCDK(stack).to(countResources("AWS::SNS::Topic",0));
 });
