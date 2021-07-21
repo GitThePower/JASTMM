@@ -11,5 +11,6 @@ beforeAll(() => {
 test('SNS Topic Created', () => {
   stack = new Jastmm(app, 'TestStack')
   
-  expectCDK(stack).to(countResources("AWS::SNS::Topic",0));
+  expectCDK(stack).to(countResources("AWS::IAM::Role",2));
+  expectCDK(stack).to(countResources("AWS::Lambda::Function",2));
 });
