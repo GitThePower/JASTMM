@@ -1,14 +1,13 @@
-import * as cdk from '@aws-cdk/core';
+import { App, Stack, StackProps } from '@aws-cdk/core';
+import { getRHLambda } from './lambda';
 
-export interface DeployProps {
-  // Define construct properties here
-}
+export class JastmmStack extends Stack {
 
-export class Deploy extends cdk.Construct {
+  constructor(scope: App, id: string, props: StackProps) {
+    super(scope, id, props);
 
-  constructor(scope: cdk.Construct, id: string, props: DeployProps = {}) {
-    super(scope, id);
+    const rhLambda = getRHLambda(this);
 
-    // Define construct contents here
   }
 }
+
