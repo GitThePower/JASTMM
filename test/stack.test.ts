@@ -11,6 +11,6 @@ beforeAll(() => {
 test('Stack Created', () => {
   stack = new JastmmStack(app, 'TestStack', {});
   
-  expectCDK(stack).to(countResources("AWS::IAM::Role",2));
-  expectCDK(stack).to(countResources("AWS::Lambda::Function",2));
+  expectCDK(stack).to(countResources("AWS::IAM::Role",1));
+  expectCDK(stack).to(countResources("AWS::Lambda::Function",1));
 });
