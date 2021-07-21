@@ -103,12 +103,8 @@ dist
 # TernJS port file
 .tern-port
 
-# CDK build files
-lib/*.d.ts
-lib/*.js
-test/*.d.ts
-test/*.js
-
-# CDK asset staging directory
-.cdk.staging
-cdk.out
+# CDK Context & Staging files
+cdk.context.json
+.cdk.staging/
+cdk.out/
+*.tabl.json
