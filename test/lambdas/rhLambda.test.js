@@ -1,3 +1,5 @@
-test('robinhood lambda placeholder test', async () => {
+const lambda = require('../../lambdas/rh');
 
+test('robinhood lambda placeholder test', async () => {
+    
 })

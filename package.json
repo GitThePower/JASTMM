@@ -42,6 +42,7 @@
     "@aws-cdk/aws-lambda": "1.111.0",
     "@aws-cdk/aws-lambda-nodejs": "1.111.0",
     "@aws-cdk/core": "1.111.0",
+    "robinhood": "^1.7.0",
     "source-map-support": "^0.5.16"
   }
 }

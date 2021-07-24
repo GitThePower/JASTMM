@@ -16,7 +16,7 @@ new JastmmStack(app, 'JastmmStack', {
 
   /* Uncomment the next line if you know exactly what Account and Region you
    * want to deploy the stack to. */
-  env: { account: config.accountNumber, region: config.region },
+  env: { account: config.awsAccountNumber, region: config.awsRegion },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
