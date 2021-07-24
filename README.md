@@ -1,5 +1,7 @@
 # JASTMM
-Just another scheme to make money (legally through the power of investing!)
+Just another scheme to make money (legally through the power of investing!).
+
+I use a local-config/ directory to conceal my private credentials.
 
 # CDK TypeScript project!
 
