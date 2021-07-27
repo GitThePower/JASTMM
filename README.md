@@ -1,17 +1,23 @@
 # JASTMM
 Just another scheme to make money (legally through the power of investing!).
 
-I use a local-config/ directory to conceal my private credentials.
+# Setup
 
-# CDK TypeScript project!
+## Install AWS CDK
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+ * Run `npm i -g aws-cdk@1.111.0`
+ * Verify Successful installation by running `npm ls -g --depth 0` and checking for `aws-cdk@1.111.0`
 
-## Useful commands
+## Install the AWS CLI
 
- * `npm run build`   compile typescript to js
- * `npm run watch`   watch for changes and compile
- * `npm run test`    perform the jest unit tests
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
+https://aws.amazon.com/cli/
+
+## Private Credentials
+
+Make a local-config/ directory at the root of this project to store private credentials.
+
+# Deploying to AWS
+
+ * `npm run build`
+ * `cdk synth`
+ * `cdk deploy`

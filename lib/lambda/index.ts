@@ -3,7 +3,7 @@ import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs'
 import { Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { Runtime } from '@aws-cdk/aws-lambda';
 
-export const getRHLambda = (scope: Construct, stackName: string) => {
+export const getRHLambda = (scope: Construct, stackName: string, rhUsername: string, rhPassword: string) => {
     const rhLambdaRole = new Role(scope, 'JastmmRHLambdaRole', {
         assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
         roleName: `${stackName}-rh-lambda-role`
@@ -12,6 +12,10 @@ export const getRHLambda = (scope: Construct, stackName: string) => {
     return new NodejsFunction(scope, 'JastmmRHLambda', {
         depsLockFilePath: 'package-lock.json',
         entry: 'lambdas/rh/index.js',
+        environment: {
+            password: rhPassword,
+            username: rhUsername
+        },
         functionName: `${stackName}-rh-lambda`,
         handler: 'handler',
         memorySize: 128,
