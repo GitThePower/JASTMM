@@ -14,7 +14,7 @@ export class JastmmStack extends Stack {
     const rhUsername = 'dummyUser';
     const rhPassword = 'dummyPassword';
 
-    const rhLambda = getRHLambda(this, stackName, rhUsername, rhPassword);
+    const rhLambda = getRHLambda(this, stackName, rhUsername, rhPassword, key);
     key.grantDecrypt(rhLambda);
 
   }

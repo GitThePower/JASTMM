@@ -1,10 +1,9 @@
 const rh = require('robinhood');
-const { config } = require('../../local-config');
 
 let authToken = null;
 const credentials = {
-    username: config.rhUsername,
-    password: config.rhPassword
+    username: process.env.RH_USERNAME,
+    password: process.env.RH_PASSWORD
 };
 
 exports.handler = async () => {
