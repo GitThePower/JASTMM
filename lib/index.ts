@@ -1,5 +1,6 @@
 import { App, Stack, StackProps } from '@aws-cdk/core';
-import { getKMSKey } from './kms';
+import { KMS } from './kms';
+import { AccountRootPrincipal } from '@aws-cdk/aws-iam';
 import { getRHLambda } from './lambda';
 
 const stackName = 'jastmm';
@@ -9,13 +10,15 @@ export class JastmmStack extends Stack {
   constructor(scope: App, id: string, props: StackProps) {
     super(scope, id, props);
 
-    const key = getKMSKey(this, stackName);
+    const kms = new KMS(this, stackName);
+    kms.key.grantEncrypt(new AccountRootPrincipal());
 
-    const rhUsername = 'dummyUser';
-    const rhPassword = 'dummyPassword';
-
-    const rhLambda = getRHLambda(this, stackName, rhUsername, rhPassword, key);
-    key.grantDecrypt(rhLambda);
+    const rhEnvironment = {
+      RH_USERNAME: 'dummyUser',
+      RH_PASSWORD: 'dummyPassword',
+    }
+    const rhLambda = getRHLambda(this, stackName, rhEnvironment);
+    kms.key.grantDecrypt(rhLambda);
 
   }
 }
