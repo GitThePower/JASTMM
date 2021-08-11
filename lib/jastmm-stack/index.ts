@@ -1,5 +1,5 @@
 import { App, Stack, StackProps } from '@aws-cdk/core';
-import { KMS } from './kms';
+import { KMS } from '../kms-stack';
 import { AccountRootPrincipal } from '@aws-cdk/aws-iam';
 import { getRHLambda } from './lambda';
 

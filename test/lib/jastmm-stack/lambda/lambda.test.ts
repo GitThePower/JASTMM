@@ -1,5 +1,5 @@
 import { App, Stack } from '@aws-cdk/core';
-import { JastmmStack } from '../../../lib';
+import { JastmmStack } from '../../../../lib/jastmm-stack';
 import { expect as expectCDK, haveResourceLike } from '@aws-cdk/assert';
 
 const app = new App();

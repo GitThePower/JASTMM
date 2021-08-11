@@ -106,8 +106,8 @@ dist
 # CDK Build Files
 *.d.ts
 lib/**/*.js
+test/lib/**/*.js
 bin/**/*.js
-test/stack/**/*.js
 
 # CDK Context & Staging files
 cdk.context.json

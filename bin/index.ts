@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import { App } from '@aws-cdk/core';
-import { JastmmStack } from '../lib';
+import { JastmmStack } from '../lib/jastmm-stack';
 import { config } from '../local-config';
 
 const app = new App();
