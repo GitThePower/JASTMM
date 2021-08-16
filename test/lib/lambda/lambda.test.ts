@@ -1,15 +1,16 @@
 import { App, Stack } from '@aws-cdk/core';
-import { JastmmStack } from '../../../../lib/jastmm-stack';
+import { JastmmStack } from '../../../lib';
 import { expect as expectCDK, haveResourceLike } from '@aws-cdk/assert';
 
 const app = new App();
+const stackName = 'jastmm';
 let stack: Stack;
-let stackName: string;
 
 beforeAll(() => {
-    stack = new JastmmStack(app, 'TestStack', {});
-    stackName = 'jastmm';
-})
+  stack = new JastmmStack(app, 'TestStack', {
+    stackName
+  });
+});
 
 test('Lambdas should have: RHLambda', () => {
     expectCDK(stack).to(
@@ -24,8 +25,12 @@ test('Lambdas should have: RHLambda', () => {
               Environment: {
                 Variables: {
                   AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-                  RH_USERNAME: 'dummyUser',
-                  RH_PASSWORD: 'dummyPassword'
+                  keyArn: {
+                    'Fn::GetAtt': [
+                      'KMSKeyBD866E3F',
+                      'Arn'
+                    ]
+                  },
                 }
               },
               Handler: 'index.handler',

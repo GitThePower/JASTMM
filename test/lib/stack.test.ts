@@ -1,12 +1,15 @@
 import { App, Stack } from '@aws-cdk/core';
-import { JastmmStack } from '../../../lib/jastmm-stack';
+import { JastmmStack } from '../../lib';
 import { expect as expectCDK, countResources } from '@aws-cdk/assert';
 
 const app = new App();
+const stackName = 'jastmm';
 let stack: Stack;
 
 beforeAll(() => {
-  stack = new JastmmStack(app, 'TestStack', {});
+  stack = new JastmmStack(app, 'TestStack', {
+    stackName
+  });
 });
 
 test('Stack Created', () => {
