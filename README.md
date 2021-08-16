@@ -5,8 +5,8 @@ Just another scheme to make money (legally through the power of investing!).
 
 ## Install AWS CDK
 
- * Run `npm i -g aws-cdk@1.111.0`
- * Verify Successful installation by running `npm ls -g --depth 0` and checking for `aws-cdk@1.111.0`
+ * Run `npm i -g aws-cdk@1.118.0`
+ * Verify Successful installation by running `npm ls -g --depth 0` and checking for `aws-cdk@1.118.0`
 
 ## Install the AWS CLI
 
