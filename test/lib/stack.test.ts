@@ -12,7 +12,8 @@ beforeAll(() => {
   });
 });
 
-test('Stack Created', () => {
-  expectCDK(stack).to(countResources("AWS::IAM::Role",1));
-  expectCDK(stack).to(countResources("AWS::Lambda::Function",1));
+test('Jastmm stack should create resources', () => {
+  expectCDK(stack).to(countResources("AWS::IAM::Role",2));
+  expectCDK(stack).to(countResources("AWS::S3::Bucket",1));
+  expectCDK(stack).to(countResources("AWS::Lambda::Function",2));
 });

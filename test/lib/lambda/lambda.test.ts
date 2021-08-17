@@ -12,7 +12,7 @@ beforeAll(() => {
   });
 });
 
-test('Lambdas should have: RHLambda', () => {
+test('Jastmm stack should create RHLambda', () => {
     expectCDK(stack).to(
         haveResourceLike('AWS::Lambda::Function', {
             FunctionName: `${stackName}-rh-lambda`,
