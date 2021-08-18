@@ -15,7 +15,7 @@ export const createS3Bucket = (scope: Construct, stackName: string, kmsKey: IKey
             transitions: [
                 {
                     storageClass: StorageClass.ONE_ZONE_INFREQUENT_ACCESS,
-                    transitionAfter: Duration.days(0)
+                    transitionAfter: Duration.days(30)
                 }
             ]
         }

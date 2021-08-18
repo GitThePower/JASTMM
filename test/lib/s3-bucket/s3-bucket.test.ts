@@ -39,7 +39,7 @@ test('Jastmm Stack should create S3 Bucket', () => {
                     Transitions: [
                         {
                         StorageClass: 'ONEZONE_IA',
-                        TransitionInDays: 0
+                        TransitionInDays: 30
                         }
                     ]
                     }
