@@ -1,32 +1,23 @@
-const rh = require('robinhood');
+const { KMS, S3 } = require('../utils/aws-utils');
 
-let authToken = null;
-const credentials = {
-    username: process.env.RH_USERNAME,
-    password: process.env.RH_PASSWORD
-};
+exports.handler = async (event) => {
+  const { s3Path } = JSON.parse(event.body);
 
-exports.handler = async () => {
-    if (authToken) {
-        credentials.token = authToken;
-        delete credentials.username;
-        delete credentials.password;
-    }
+  let s3Object;
+  try {
+    s3Object = await S3.getObject(process.env.S3_BUCKET, s3Path);
+  } catch (err) {
+    console.error(JSON.stringify(err));
+  }
 
-    let Robinhood = rh(credentials, (data) => {
-        if (data && data.mfa_required) {
-            let mfa_code = '';
-            Robinhood.set_mfa_code(mfa_code, () => {
-                console.log(Robinhood.auth_token());
-            })
-        } else {
-            Robinhood.get_crypto('BTC', (err, res, body) => {
-                console.log(body);
-            });
-        }
-    })
+  let creds;
+  try {
+    creds = await KMS.decrypt(process.env.KMS_KEY, s3Object);
+  } catch (err) {
+    console.error(JSON.stringify(err));
+  }
 
-    return {
-        message: 'Success'
-    };
+  return {
+    message: `Credentials: ${JSON.stringify(creds)}`
+  };
 }

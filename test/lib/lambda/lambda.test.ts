@@ -13,29 +13,24 @@ beforeAll(() => {
 });
 
 test('Jastmm stack should create RHLambda', () => {
-    expectCDK(stack).to(
-        haveResourceLike('AWS::Lambda::Function', {
-            FunctionName: `${stackName}-rh-lambda`,
-            Role: {
-                'Fn::GetAtt': [
-                  'JastmmRHLambdaRole419B85BB',
-                  'Arn'
-                ]
-              },
-              Environment: {
-                Variables: {
-                  AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-                  keyArn: {
-                    'Fn::GetAtt': [
-                      'KMSKeyBD866E3F',
-                      'Arn'
-                    ]
-                  },
-                }
-              },
-              Handler: 'index.handler',
-              MemorySize: 128,
-              Runtime: 'nodejs14.x'
-        })
-    )
+  expectCDK(stack).to(
+    haveResourceLike('AWS::Lambda::Function', {
+      FunctionName: `${stackName}-rh-lambda`,
+      Environment: {
+        Variables: {
+          AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+          KMS_KEY: {
+            'Fn::GetAtt': [
+              'KMSKeyBD866E3F',
+              'Arn'
+            ]
+          },
+          S3_BUCKET: {
+            Ref: 'S3Bucket07682993'
+          },
+        }
+      },
+      Handler: 'index.handler',
+    })
+  )
 });
