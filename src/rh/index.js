@@ -7,18 +7,18 @@ class SecretsManager {
   }
 
   getSecretValue = (SecretId) =>
-    this.secretsManager.getSecretValue({ SecretId }).promise()
-      .then((r) => r)
-      .catch((e) => e);
+    this.secretsManager.getSecretValue({ SecretId }).promise();
 }
 
-exports.handler = async (event) => {
+exports.handler = async () => {
+  const SM = new SecretsManager();
+
   if (!credentials) {
     try {
-      const SM = new SecretsManager();
-      credentials = await SM.getSecretValue(process.env.RH_CREDENTIALS_ARN);
-    } catch (e) {
-      console.error(JSON.stringify(e));
+      const secretPromise = await SM.getSecretValue(process.env.RH_CREDENTIALS_ARN);
+      credentials = JSON.parse(secretPromise.SecretString);
+    } catch {
+      throw new Error('Unable to get Secret Value.');
     }
   }
 

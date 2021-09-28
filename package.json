@@ -10,8 +10,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "tsc && jest",
-    "test-clean": "tsc && jest && npm run cleanup",
+    "test": "tsc && jest && npm run cleanup",
+    "test-one": "jest --",
     "cdk": "cdk",
     "cleanup": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./cleanUp.ps1"
   },
