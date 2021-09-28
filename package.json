@@ -11,7 +11,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "tsc && jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "cleanup": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./cleanUp.ps1"
   },
   "repository": {
     "type": "git",
