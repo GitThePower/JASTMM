@@ -11,6 +11,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "tsc && jest",
+    "test-clean": "tsc && jest && npm run cleanup",
     "cdk": "cdk",
     "cleanup": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./cleanUp.ps1"
   },
@@ -31,7 +32,6 @@
     "aws-cdk": "1.124.0",
     "aws-sdk-mock": "^5.3.0",
     "esbuild": "^0.12.15",
-    "fs": "^0.0.1-security",
     "jest": "^26.4.2",
     "lambda-local": "^2.0.0",
     "ts-jest": "^26.2.0",
@@ -45,10 +45,9 @@
     "@aws-cdk/aws-iam": "1.124.0",
     "@aws-cdk/aws-lambda": "1.124.0",
     "@aws-cdk/aws-lambda-nodejs": "1.124.0",
-    "@aws-cdk/aws-s3": "1.124.0",
+    "@aws-cdk/aws-secretsmanager": "1.124.0",
     "@aws-cdk/core": "1.124.0",
     "aws-sdk": "^2.973.0",
-    "npm": "^7.24.1",
     "robinhood": "github:aveliz1999/robinhood-node",
     "source-map-support": "^0.5.19"
   }

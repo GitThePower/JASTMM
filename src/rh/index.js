@@ -1,23 +1,26 @@
-const { KMS, S3 } = require('../utils/aws-utils');
+const AWS = require('aws-sdk');
+let credentials = null;
+
+class SecretsManager {
+  constructor() {
+    this.secretsManager = new AWS.SecretsManager();
+  }
+
+  getSecretValue = (SecretId) =>
+    this.secretsManager.getSecretValue({ SecretId }).promise()
+      .then((r) => r)
+      .catch((e) => e);
+}
 
 exports.handler = async (event) => {
-  const { s3Path } = JSON.parse(event.body);
-
-  let s3Object;
-  try {
-    s3Object = await S3.getObject(process.env.S3_BUCKET, s3Path);
-  } catch (err) {
-    console.error(JSON.stringify(err));
+  if (!credentials) {
+    try {
+      const SM = new SecretsManager();
+      credentials = await SM.getSecretValue(process.env.RH_CREDENTIALS_ARN);
+    } catch (e) {
+      console.error(JSON.stringify(e));
+    }
   }
 
-  let creds;
-  try {
-    creds = await KMS.decrypt(process.env.KMS_KEY, s3Object);
-  } catch (err) {
-    console.error(JSON.stringify(err));
-  }
-
-  return {
-    message: `Credentials: ${JSON.stringify(creds)}`
-  };
+  return credentials;
 }

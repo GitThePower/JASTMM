@@ -5,8 +5,9 @@ import { config } from '../local-config';
 import { JastmmStack } from '../lib';
 
 const app = new App();
+const { awsAccountNumber, awsRegion, ...jastmmStackProps } = config;
 
 new JastmmStack(app, 'JastmmStack', {
-  env: { account: config.awsAccountNumber, region: config.awsRegion},
-  stackName: config.stackName
+  env: { account: awsAccountNumber, region: awsRegion},
+  ...jastmmStackProps
 });
