@@ -1,6 +1,6 @@
 import { App, Stack, StackProps } from '@aws-cdk/core';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
-import { AccountRootPrincipal, AnyPrincipal, Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import { AccountRootPrincipal, ArnPrincipal, Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs'
 import { Runtime } from '@aws-cdk/aws-lambda';
 
@@ -8,6 +8,7 @@ interface JastmmStackProps extends StackProps {
   rhPassword: string;
   rhUsername: string;
   stackName: string;
+  userArn: string;
 }
 
 export class JastmmStack extends Stack {
@@ -59,7 +60,7 @@ export class JastmmStack extends Stack {
     const universalDenyStatement = new PolicyStatement({
       actions: ['*'],
       effect: Effect.DENY,
-      notPrincipals: [new AccountRootPrincipal()],
+      notPrincipals: [new AccountRootPrincipal(), new ArnPrincipal(props.userArn)],
       notResources: [rhLambda.functionArn],
     });
     rhCreds.addToResourcePolicy(universalDenyStatement);

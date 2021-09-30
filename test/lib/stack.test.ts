@@ -11,6 +11,7 @@ beforeAll(() => {
     rhPassword: 'somePassword',
     rhUsername: 'someUsername',
     stackName: 'jastmm',
+    userArn: 'someArn'
   }
   stack = new JastmmStack(app, 'TestStack', jastmmStackProps);
 });
