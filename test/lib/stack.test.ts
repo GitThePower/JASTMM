@@ -18,6 +18,7 @@ beforeAll(() => {
 test('Jastmm stack should create resources', () => {
   expectCDK(stack).to(countResources("AWS::IAM::Policy", 1));
   expectCDK(stack).to(countResources("AWS::IAM::Role", 1));
+  expectCDK(stack).to(countResources("AWS::Lambda::EventInvokeConfig", 1));
   expectCDK(stack).to(countResources("AWS::Lambda::Function", 1));
   expectCDK(stack).to(countResources("AWS::SecretsManager::Secret", 1));
 });
