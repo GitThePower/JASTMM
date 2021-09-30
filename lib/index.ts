@@ -28,7 +28,7 @@ export class JastmmStack extends Stack {
       secretName: 'rh-credentials'
     });
 
-    // Create a Role for our Lambda
+    // Create a Role for Lambda
     const rhLambdaRole = new Role(this, 'JastmmRHLambdaRole', {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
       roleName: `${props.stackName}-rh-lambda-role`
@@ -41,7 +41,7 @@ export class JastmmStack extends Stack {
     rhCreds.grantRead(rhLambdaRole);  // Grant the Role Access to read the credentials
     rhCreds.grantWrite(rhLambdaRole); // Grant the Role Access to update the credentials
 
-    // Create the Lambda
+    // Create Lambda
     const rhLambda = new NodejsFunction(this, 'JastmmRHLambda', {
       depsLockFilePath: 'package-lock.json',
       entry: 'src/rh/index.js',
@@ -56,14 +56,18 @@ export class JastmmStack extends Stack {
       runtime: Runtime.NODEJS_14_X
     });
 
-    // Deny credential actions to any accept account root and accessing lambda
-    const universalDenyStatement = new PolicyStatement({
+    // Create Policy Statements governing access to credentials
+    rhCreds.addToResourcePolicy(new PolicyStatement({
+      actions: ['*'],
+      effect: Effect.ALLOW,
+      principals: [new ServicePrincipal('lambda.amazonaws.com')],
+    }));
+    rhCreds.addToResourcePolicy(new PolicyStatement({
       actions: ['*'],
       effect: Effect.DENY,
       notPrincipals: [new AccountRootPrincipal(), new ArnPrincipal(props.userArn)],
-      notResources: [rhLambda.functionArn],
-    });
-    rhCreds.addToResourcePolicy(universalDenyStatement);
+      resources: ['*'],
+    }));
   }
 }
 
