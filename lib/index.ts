@@ -1,6 +1,6 @@
 import { App, Stack, StackProps } from '@aws-cdk/core';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
-import { ManagedPolicy, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import { Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs'
 import { Runtime } from '@aws-cdk/aws-lambda';
 
@@ -27,6 +27,13 @@ export class JastmmStack extends Stack {
       secretName: 'rh-credentials'
     });
 
+    const universalDenyStatement = new PolicyStatement({
+      actions: ['*'],
+      effect: Effect.DENY,
+      resources: ['*']
+    });
+    rhCreds.addToResourcePolicy(universalDenyStatement);
+
     // Create a Role for our Lambda
     const rhLambdaRole = new Role(this, 'JastmmRHLambdaRole', {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
@@ -41,7 +48,7 @@ export class JastmmStack extends Stack {
     rhCreds.grantWrite(rhLambdaRole); // Grant the Role Access to update the credentials
 
     // Create the Lambda
-    new NodejsFunction(this, 'JastmmRHLambda', {
+    const rhLambda = new NodejsFunction(this, 'JastmmRHLambda', {
       depsLockFilePath: 'package-lock.json',
       entry: 'src/rh/index.js',
       environment: {
@@ -54,6 +61,9 @@ export class JastmmStack extends Stack {
       role: rhLambdaRole,
       runtime: Runtime.NODEJS_14_X
     });
+    universalDenyStatement.addCondition('ArnNotEquals', {
+      'aws:SourceArn': rhLambda.functionArn
+    })
   }
 }
 
