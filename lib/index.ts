@@ -1,6 +1,6 @@
 import { App, Stack, StackProps } from '@aws-cdk/core';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
-import { AnyPrincipal, Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import { AccountRootPrincipal, AnyPrincipal, Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs'
 import { Runtime } from '@aws-cdk/aws-lambda';
 
@@ -26,14 +26,6 @@ export class JastmmStack extends Stack {
       },
       secretName: 'rh-credentials'
     });
-
-    const universalDenyStatement = new PolicyStatement({
-      actions: ['*'],
-      effect: Effect.DENY,
-      principals: [new AnyPrincipal()],
-      resources: ['*']
-    });
-    rhCreds.addToResourcePolicy(universalDenyStatement);
 
     // Create a Role for our Lambda
     const rhLambdaRole = new Role(this, 'JastmmRHLambdaRole', {
@@ -62,9 +54,15 @@ export class JastmmStack extends Stack {
       role: rhLambdaRole,
       runtime: Runtime.NODEJS_14_X
     });
-    universalDenyStatement.addCondition('ArnNotEquals', {
-      'aws:SourceArn': rhLambda.functionArn
-    })
+
+    // Deny credential actions to any accept account root and accessing lambda
+    const universalDenyStatement = new PolicyStatement({
+      actions: ['*'],
+      effect: Effect.DENY,
+      notPrincipals: [new AccountRootPrincipal()],
+      notResources: [rhLambda.functionArn],
+    });
+    rhCreds.addToResourcePolicy(universalDenyStatement);
   }
 }
 
