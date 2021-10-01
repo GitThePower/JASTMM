@@ -1,23 +1,28 @@
-const rh = require('robinhood');
-let authToken = null;
+const AWS = require('aws-sdk');
+const robinhood = require('robinhood');
 
-exports.logIn = (credentials) => {
-  if (authToken) {
-    credentials.token = authToken;
-    delete credentials.username;
-    delete credentials.password;
-  }
+const logIn = (credentials) => {
+    let rh = robinhood(credentials, (data) => {
+        if (data && data.mfa_required) {
+            let mfa_code = '';
+            rh.set_mfa_code(mfa_code, () => {
+                credentials.token = rh.auth_token();
+            })
+        }
+    })
 
-  let Robinhood = rh(credentials, (data) => {
-    if (data && data.mfa_required) {
-      let mfa_code = '';
-      Robinhood.set_mfa_code(mfa_code, () => {
-        console.log(Robinhood.auth_token());
-      })
-    } else {
-      Robinhood.get_crypto('BTC', (err, res, body) => {
-        console.log(body);
-      });
-    }
-  })
+    return credentials;
+};
+
+const getCryptoData = (credentials, ticker) => {
+    let rh = robinhood(credentials, () => {
+        rh.get_crypto(ticker, (err, res, body) => {
+            console.log(body);
+        });
+    })
+};
+
+module.exports = {
+    logIn,
+    getCryptoData
 }
