@@ -3,11 +3,6 @@ Just another scheme to make money (legally through the power of investing!).
 
 # Setup
 
-## Install AWS CDK
-
- * Run `npm i -g aws-cdk@1.118.0`
- * Verify Successful installation by running `npm ls -g --depth 0` and checking for `aws-cdk@1.118.0`
-
 ## Install the AWS CLI
 
 https://aws.amazon.com/cli/
@@ -16,8 +11,13 @@ https://aws.amazon.com/cli/
 
 Make a local-config/ directory at the root of this project to store private credentials.
 
-# Deploying to AWS
+# Commands
 
- * `npm run build`
- * `cdk synth`
- * `cdk deploy`
+ * `npm run build`: creates a build from your typescript files
+ * `npm run cleanup`: deletes all the files created by `npm run build`
+ * `npm run deploy`: builds and deploys the project and cleans up the build files afterward (REQUIRED: valid user configuration in aws cli)
+ * `npm t`: creates a build, runs unit tests, and cleans up the build files afterward
+ * `npm run test-one [TEST-FILE]`: tests the test file passed as an argument
+
+
+ 
