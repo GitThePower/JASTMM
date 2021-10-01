@@ -9,11 +9,12 @@
   },
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w",
+    "cdk": "cdk",
+    "cleanup": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./cleanUp.ps1",
+    "deploy": "tsc && cdk synth && cdk deploy -y && npm run cleanup",
     "test": "tsc && jest && npm run cleanup",
     "test-one": "jest --",
-    "cdk": "cdk",
-    "cleanup": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./cleanUp.ps1"
+    "watch": "tsc -w"
   },
   "repository": {
     "type": "git",

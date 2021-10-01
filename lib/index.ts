@@ -42,7 +42,7 @@ export class JastmmStack extends Stack {
     rhCreds.grantWrite(rhLambdaRole); // Grant the Role Access to update the credentials
 
     // Create Lambda
-    const rhLambda = new NodejsFunction(this, 'JastmmRHLambda', {
+    new NodejsFunction(this, 'JastmmRHLambda', {
       depsLockFilePath: 'package-lock.json',
       entry: 'src/rh/index.js',
       environment: {
@@ -55,19 +55,6 @@ export class JastmmStack extends Stack {
       role: rhLambdaRole,
       runtime: Runtime.NODEJS_14_X
     });
-
-    // Create Policy Statements governing access to credentials
-    rhCreds.addToResourcePolicy(new PolicyStatement({
-      actions: ['*'],
-      effect: Effect.ALLOW,
-      principals: [new ServicePrincipal('lambda.amazonaws.com')],
-    }));
-    rhCreds.addToResourcePolicy(new PolicyStatement({
-      actions: ['*'],
-      effect: Effect.DENY,
-      notPrincipals: [new AccountRootPrincipal(), new ArnPrincipal(props.userArn)],
-      resources: ['*'],
-    }));
   }
 }
 
