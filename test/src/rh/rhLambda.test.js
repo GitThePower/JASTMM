@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk-mock');
 const lambdaLocal = require('lambda-local');
-const lambdaFunc = require('../../src/rh/index');
+const lambdaFunc = require('../../../src/rh/index');
 
 process.env.RH_CREDENTIALS_ARN = 'someArn';
 const event = {};
