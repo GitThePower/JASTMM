@@ -1,6 +1,6 @@
 import { App, Stack, StackProps } from '@aws-cdk/core';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
-import { AccountRootPrincipal, ArnPrincipal, Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import { ManagedPolicy, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs'
 import { Runtime } from '@aws-cdk/aws-lambda';
 
