@@ -1,17 +1,18 @@
 const AWS = require('aws-sdk');
 const robinhood = require('robinhood');
 
-const logIn = (credentials) => {
-    let rh = robinhood(credentials, (data) => {
+const logIn = async (credentials) => {
+    let rh = robinhood(credentials, async (data) => {
         if (data && data.mfa_required) {
             let mfa_code = '';
-            rh.set_mfa_code(mfa_code, () => {
+            await rh.set_mfa_code(mfa_code, () => {
                 credentials.token = rh.auth_token();
             })
+            return credentials;
+        } else {
+            return credentials;
         }
-    })
-
-    return credentials;
+    });
 };
 
 const getCryptoData = (credentials, ticker) => {
