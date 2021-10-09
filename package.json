@@ -9,9 +9,12 @@
   },
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w",
-    "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "cleanup": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./cleanUp.ps1",
+    "deploy": "tsc && cdk synth && cdk deploy -y && npm run cleanup",
+    "test": "tsc && jest && npm run cleanup",
+    "test-one": "jest --",
+    "watch": "tsc -w"
   },
   "repository": {
     "type": "git",
@@ -24,24 +27,30 @@
   },
   "homepage": "https://github.com/GitThePower/JASTMM#readme",
   "devDependencies": {
-    "@aws-cdk/assert": "1.111.0",
+    "@aws-cdk/assert": "1.124.0",
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
-    "aws-cdk": "1.111.0",
+    "aws-cdk": "1.124.0",
+    "aws-sdk-mock": "^5.3.0",
     "esbuild": "^0.12.15",
     "jest": "^26.4.2",
+    "lambda-local": "^2.0.0",
     "ts-jest": "^26.2.0",
     "ts-node": "^9.0.0",
     "typescript": "~3.9.7"
   },
   "peerDependencies": {
-    "@aws-cdk/core": "1.111.0"
+    "@aws-cdk/core": "1.124.0"
   },
   "dependencies": {
-    "@aws-cdk/aws-iam": "1.111.0",
-    "@aws-cdk/aws-lambda": "1.111.0",
-    "@aws-cdk/aws-lambda-nodejs": "1.111.0",
-    "@aws-cdk/core": "1.111.0",
-    "source-map-support": "^0.5.16"
+    "@aws-cdk/aws-iam": "1.124.0",
+    "@aws-cdk/aws-lambda": "1.124.0",
+    "@aws-cdk/aws-lambda-nodejs": "1.124.0",
+    "@aws-cdk/aws-secretsmanager": "1.124.0",
+    "@aws-cdk/core": "1.124.0",
+    "aws-sdk": "^2.973.0",
+    "axios": "^0.22.0",
+    "source-map-support": "^0.5.19",
+    "uuid": "^8.3.2"
   }
 }
