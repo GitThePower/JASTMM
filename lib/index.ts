@@ -8,7 +8,6 @@ interface JastmmStackProps extends StackProps {
   rhPassword: string;
   rhUsername: string;
   stackName: string;
-  userArn: string;
 }
 
 export class JastmmStack extends Stack {
