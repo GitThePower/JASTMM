@@ -1,18 +1,22 @@
-const AWS = require('aws-sdk-mock');
-const { logIn } = require('../../../src/rh/api');
+const robinhood = require('../../../src/rh/api');
 const { config } = require('../../../local-config');
 
+const sleep = (seconds) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 const credentials = {
     username: config.rhUsername,
-    password: config.rhPassword
+    password: config.rhPassword,
+    // mfa_code: '123456'
 };
 
-afterEach(() => {
-    AWS.restore();
-});
+test('first login request multi factor authentication', async () => {
+    const creds = JSON.parse(JSON.stringify(credentials));
 
-test('login should return a valid auth token to access the robinhood api', async () => {
-    const result = await logIn(credentials);
-
-    console.log(result);
+    try {
+        const rh = new robinhood(creds);
+        await sleep(3);
+        console.log('ACCESS TOKEN: ', rh.access_token);
+        console.log('ACCOUNT: ', rh.account);
+    } catch (e) {
+        console.error(JSON.stringify(e));
+    }
 });
