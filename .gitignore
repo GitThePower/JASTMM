@@ -117,3 +117,6 @@ cdk.out/
 
 # Configuration Values
 local-config/
+
+# Package Lock
+package-lock.json
