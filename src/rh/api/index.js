@@ -8,8 +8,8 @@ class RobinhoodApi {
         device_token: uuidv4(),
         password: config.DEFAULT_PASSWORD,
         username: config.DEFAULT_USERNAME
-    }
-    mfa_code = config.DEFAULT_MFA_CODE
+    };
+    mfa_code = config.DEFAULT_MFA_CODE;
     access_token = config.DEFAULT_TOKEN;
     refresh_token = config.DEFAULT_TOKEN;
     account = config.DEFAULT_ACCOUNT;
