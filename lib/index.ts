@@ -4,6 +4,7 @@ import { Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs'
 import { Runtime } from '@aws-cdk/aws-lambda';
 import { Topic } from '@aws-cdk/aws-sns';
+import { LambdaSubscription } from '@aws-cdk/aws-sns-subscriptions';
 
 interface JastmmStackProps extends StackProps {
   rhPassword: string;
@@ -42,7 +43,7 @@ export class JastmmStack extends Stack {
     rhCreds.grantWrite(rhLambdaRole); // Grant the Role Access to update the credentials
 
     // Lambda Function
-    new NodejsFunction(this, 'JastmmRhLambda', {
+    const rhLambda = new NodejsFunction(this, 'JastmmRhLambda', {
       depsLockFilePath: 'package-lock.json',
       entry: 'src/rh/index.js',
       environment: {
@@ -67,6 +68,7 @@ export class JastmmStack extends Stack {
       principals: [new ServicePrincipal('mobile.amazonaws.com')],
       resources: ['*']
     }))
+    rhMfaTopic.addSubscription(new LambdaSubscription(rhLambda));
   }
 }
 

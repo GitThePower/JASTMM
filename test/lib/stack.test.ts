@@ -22,4 +22,6 @@ test('Jastmm stack should create resources', () => {
   expectCDK(stack).to(countResources("AWS::Lambda::EventInvokeConfig", 1));
   expectCDK(stack).to(countResources("AWS::Lambda::Function", 1));
   expectCDK(stack).to(countResources("AWS::SecretsManager::Secret", 1));
+  expectCDK(stack).to(countResources("AWS::SNS::Topic", 1));
+  expectCDK(stack).to(countResources("AWS::SNS::TopicPolicy", 1));
 });

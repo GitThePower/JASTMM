@@ -33,6 +33,7 @@
     "@aws-cdk/aws-lambda-nodejs": "1.129.0",
     "@aws-cdk/aws-secretsmanager": "1.129.0",
     "@aws-cdk/aws-sns": "1.129.0",
+    "@aws-cdk/aws-sns-subscriptions": "1.129.0",
     "@aws-cdk/core": "1.129.0",
     "@types/jest": "^27.0.0",
     "@types/node": "^16.11.6",
