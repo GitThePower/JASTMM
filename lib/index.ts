@@ -62,13 +62,13 @@ export class JastmmStack extends Stack {
       displayName: 'JastmmRhMfaTopic',
       topicName: `${props.stackName}-rh-mfa-topic`
     });
-    rhMfaTopic.addToResourcePolicy(new PolicyStatement({
+    rhMfaTopic.addToResourcePolicy(new PolicyStatement({ // Enable receive SMS
       actions: ['sns:Publish'],
       effect: Effect.ALLOW,
       principals: [new ServicePrincipal('mobile.amazonaws.com')],
       resources: ['*']
-    }))
-    rhMfaTopic.addSubscription(new LambdaSubscription(rhLambda));
+    }));
+    rhMfaTopic.addSubscription(new LambdaSubscription(rhLambda)); // Send received messages to lambda
   }
 }
 
