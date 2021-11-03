@@ -16,7 +16,9 @@ beforeAll(() => {
   stack = new JastmmStack(app, 'TestStack', jastmmStackProps);
 });
 
-test('Jastmm stack should create resources', () => {
+test('Jastmm stack should create exactly these resources', () => {
+  // Number of resources at deploy should be this many -2 because
+  // CDK::Metadata and Cloudformation::Stack are not counted
   expectCDK(stack).to(countResources("AWS::IAM::Policy", 1));
   expectCDK(stack).to(countResources("AWS::IAM::Role", 1));
   expectCDK(stack).to(countResources("AWS::Lambda::EventInvokeConfig", 1));
