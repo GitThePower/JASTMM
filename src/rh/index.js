@@ -1,7 +1,10 @@
 const AWS = require('aws-sdk');
 let credentials = null;
 
-exports.handler = async () => {
+exports.handler = async (event) => {
+  const startUpMsg = (event) ? 'sns event received.' : 'starting scheduled exection.';
+  console.log(`func=rhLambda,msg=${startUpMsg}`);
+  
   const SM = new AWS.SecretsManager();
 
   if (!credentials) {
