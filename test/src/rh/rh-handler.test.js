@@ -16,6 +16,19 @@ afterEach(() => {
     AWS.restore();
 });
 
+test('lambda should not return', async () => {
+    AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
+        cb(null, testSecret)
+    });
+
+    const result = await lambdaLocal.execute({
+        event,
+        lambdaFunc,
+        verboseLevel: 0
+    });
+    expect(result).toBeUndefined();
+});
+
 test('lambda should throw error when unable to get secret', async () => {
     AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
         cb('Secret Unvailable.', null)
@@ -29,32 +42,28 @@ test('lambda should throw error when unable to get secret', async () => {
         });
         expect(result).toBeFalsy();
     } catch (e) {
-        expect(e.errorMessage).toEqual('Unable to get Secret Value.');
+        expect(e.errorMessage).toEqual('unable to get secret value');
     }
 });
 
-test('lambda should get and cache credentials from secrets manager', async () => {
+test('lambda should cache credentials from secrets manager', async () => {
     AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
         cb(null, testSecret)
     });
 
-    const response1 = await lambdaLocal.execute({
+    const result1 = await lambdaLocal.execute({
         event,
         lambdaFunc,
         verboseLevel: 0
     });
-
-    expect(response1.username).toEqual('testUsername');
-    expect(response1.password).toEqual('testPassword');
+    expect(result1).toBeUndefined();
 
     AWS.restore();
 
-    const response2 = await lambdaLocal.execute({
+    const result2 = await lambdaLocal.execute({
         event,
         lambdaFunc,
         verboseLevel: 0
     });
-
-    expect(response2.username).toEqual('testUsername');
-    expect(response2.password).toEqual('testPassword');
+    expect(result2).toBeUndefined();
 });
