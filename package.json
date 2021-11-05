@@ -11,7 +11,7 @@
     "build": "tsc",
     "cdk": "cdk",
     "cleanup": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./cleanUp.ps1",
-    "deploy": "tsc && cdk synth && cdk deploy -y && npm run cleanup",
+    "deploy": "tsc && jest -- stack.test.ts && cdk synth && cdk deploy --require-approval never && npm run cleanup",
     "test": "tsc && jest && npm run cleanup",
     "test-one": "jest --",
     "watch": "tsc -w"
