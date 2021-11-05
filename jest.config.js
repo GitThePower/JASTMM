@@ -2,7 +2,8 @@ module.exports = {
   collectCoverage: true,
   coveragePathIgnorePatterns: [
     '/node_modules/',
-    '/test/'
+    '/test/',
+    '/src/rh/api'
   ],
   roots: ['<rootDir>/test'],
   testEnvironment: 'node',

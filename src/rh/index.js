@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 let credentials = null;
 
-const tryParseSNSEvent = (event) => {
+const parseEvent = (event) => {
   if(event &&
     event.Records &&
     event.Records[0] &&
@@ -9,19 +9,20 @@ const tryParseSNSEvent = (event) => {
     event.Records[0].Sns.Message) {
       try {
         const data = JSON.parse(event.Records[0].Sns.Message);
+        console.log(`func=rhLambda,msg=sns event received`);
         return data.messageBody;
       } catch {
-        console.error(`func=rhLambda,msg=invalid sns event`);
+        const errorMsg = `invalid sns event`
+        console.error(`func=rhLambda,msg=${errorMsg}`);
+        throw new Error(errorMsg);
       }
+  } else {
+    console.log(`func=rhLambda,msg=scheduled execution`);
   }
-
-  return null;
 }
 
 exports.handler = async (event) => {
-  const eventMessage = tryParseSNSEvent(event);
-  const startMsg = (eventMessage) ? 'sns event received' : 'scheduled execution';
-  console.log(`func=rhLambda,msg=${startMsg}`);
+  parseEvent(event);
 
   const SM = new AWS.SecretsManager();
   if (!credentials) {
