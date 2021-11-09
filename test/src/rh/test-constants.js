@@ -1,7 +1,5 @@
 module.exports = {
-    EVENT_SCHEDULED: {
-
-    },
+    EVENT_SCHEDULED: {},
     EVENT_SNS: {
         Records: [
             {
