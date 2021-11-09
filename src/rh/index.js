@@ -8,7 +8,7 @@ const handleResult = (msg, res) => {
 }
 
 const handleFailure = (msg) => {
-  console.log(`func=${config.FUNCTION_NAME},msg=${msg}`);
+  console.error(`func=${config.FUNCTION_NAME},msg=${msg}`);
   return new Error(msg);
 }
 
