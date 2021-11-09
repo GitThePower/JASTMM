@@ -1,5 +1,16 @@
 const AWS = require('aws-sdk');
+const config = require('./config');
 let credentials = null;
+
+const handleResult = (msg, res) => {
+  console.log(`func=${config.FUNCTION_NAME},msg=${msg}`);
+  return res;
+}
+
+const handleFailure = (msg) => {
+  console.log(`func=${config.FUNCTION_NAME},msg=${msg}`);
+  return new Error(msg);
+}
 
 const parseEvent = (event) => {
   if(event &&
@@ -9,15 +20,13 @@ const parseEvent = (event) => {
     event.Records[0].Sns.Message) {
       try {
         const data = JSON.parse(event.Records[0].Sns.Message);
-        console.log(`func=rhLambda,msg=sns event received`);
-        return data.messageBody;
+        const mfaCode = data.messageBody.match(config.MFA_TOKEN_PATTERN)[0];
+        return handleResult(config.SNS_EVENT_RECEIVED, mfaCode);
       } catch {
-        const errorMsg = `invalid sns event`
-        console.error(`func=rhLambda,msg=${errorMsg}`);
-        throw new Error(errorMsg);
+        throw handleFailure(config.INVALID_SNS_MESSAGE);
       }
   } else {
-    console.log(`func=rhLambda,msg=scheduled execution`);
+    return handleResult(config.SCHEDULED_EXECUTION);
   }
 }
 
@@ -28,16 +37,14 @@ const retrieveCredentials = async () => {
       const secretPromise = await SM.getSecretValue({ SecretId: process.env.RH_CREDENTIALS_ARN }).promise();
       credentials = JSON.parse(secretPromise.SecretString);
     } catch {
-      const errorMsg = 'unable to get secret value'
-      console.error(`func=rhLambda,msg=${errorMsg}`);
-      throw new Error(errorMsg);
+      throw handleFailure(config.SECRETS_MANANGER_ERROR);
     }
   }
 }
 
 exports.handler = async (event) => {
-  const eventMsg = parseEvent(event);
+  const mfa_code = parseEvent(event);
   await retrieveCredentials();
   
-  console.log('func=rhLambda,msg=success');
+  return handleResult(config.EXECUTION_SUCCESS);
 }

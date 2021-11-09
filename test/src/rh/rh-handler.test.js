@@ -13,19 +13,26 @@ afterEach(() => {
  * ERRORS
  */
 test('lambda should throw error for malformed sns event', async () => {
+    const sns_event_malformed = copy(EVENT_SNS);
     AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
         cb(null, SECRET)
     });
 
-    const sns_event_malformed = copy(EVENT_SNS);
     sns_event_malformed.Records[0].Sns.Message = 'some string message';
+    try {await executeLambda(lambdaFunc, sns_event_malformed);}
+    catch (e) {expect(e.errorMessage).toEqual('invalid sns event');}
 
-    try {
-        const result = await executeLambda(lambdaFunc, sns_event_malformed);
-        expect(result).toBeFalsy();
-    } catch (e) {
-        expect(e.errorMessage).toEqual('invalid sns event');
-    }
+    sns_event_malformed.Records[0].Sns.Message = '{"messageBody": "some non-numerical message"}';
+    try {await executeLambda(lambdaFunc, sns_event_malformed);}
+    catch (e) {expect(e.errorMessage).toEqual('invalid sns event');}
+
+    sns_event_malformed.Records[0].Sns.Message = '{"messageBody": "12345"}';
+    try {executeLambda(lambdaFunc, sns_event_malformed);}
+    catch (e) {expect(e.errorMessage).toEqual('invalid sns event');}
+
+    sns_event_malformed.Records[0].Sns.Message = '{"messageBody": "1234567"}';
+    try {await executeLambda(lambdaFunc, sns_event_malformed);}
+    catch (e) {expect(e.errorMessage).toEqual('invalid sns event');}
 });
 
 test('lambda should throw error when unable to get secret', async () => {
@@ -34,8 +41,7 @@ test('lambda should throw error when unable to get secret', async () => {
     });
 
     try {
-        const result = await executeLambda(lambdaFunc, EVENT_SCHEDULED);
-        expect(result).toBeFalsy();
+        await executeLambda(lambdaFunc, EVENT_SCHEDULED);
     } catch (e) {
         console.log('ERROR', JSON.stringify(e));
         expect(e.errorMessage).toEqual('unable to get secret value');
@@ -45,7 +51,7 @@ test('lambda should throw error when unable to get secret', async () => {
 /**
  * SUCCESSES
  */
-test('lambda should succeed for scheduled event', async () => {
+test('lambda return should not be defined', async () => {
     AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
         cb(null, SECRET)
     });
@@ -59,8 +65,7 @@ test('lambda should succeed for sns event', async () => {
         cb(null, SECRET)
     });
 
-    const result = await executeLambda(lambdaFunc, EVENT_SNS);
-    expect(result).toBeUndefined();
+    await executeLambda(lambdaFunc, EVENT_SNS);
 });
 
 test('lambda should cache credentials from secrets manager', async () => {
@@ -68,11 +73,7 @@ test('lambda should cache credentials from secrets manager', async () => {
         cb(null, SECRET)
     });
 
-    const result1 = await executeLambda(lambdaFunc, EVENT_SCHEDULED);
-    expect(result1).toBeUndefined();
-
+    await executeLambda(lambdaFunc, EVENT_SCHEDULED);
     AWS.restore();
-
-    const result2 = await executeLambda(lambdaFunc, EVENT_SCHEDULED);
-    expect(result2).toBeUndefined();
+    await executeLambda(lambdaFunc, EVENT_SCHEDULED);
 });
