@@ -21,9 +21,7 @@ const parseEvent = (event) => {
   }
 }
 
-exports.handler = async (event) => {
-  parseEvent(event);
-
+const retrieveCredentials = async () => {
   const SM = new AWS.SecretsManager();
   if (!credentials) {
     try {
@@ -35,6 +33,11 @@ exports.handler = async (event) => {
       throw new Error(errorMsg);
     }
   }
+}
+
+exports.handler = async (event) => {
+  const eventMsg = parseEvent(event);
+  await retrieveCredentials();
   
   console.log('func=rhLambda,msg=success');
 }
