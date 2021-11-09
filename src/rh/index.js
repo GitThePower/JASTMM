@@ -1,16 +1,9 @@
 const AWS = require('aws-sdk');
+const { handleFailure, handleResult, sleep } = require('../utils');
+const robinhood = require('./api');
 const config = require('./config');
 let credentials = null;
-
-const handleResult = (msg, res) => {
-  console.log(`func=${config.FUNCTION_NAME},msg=${msg}`);
-  return res;
-}
-
-const handleFailure = (msg) => {
-  console.error(`func=${config.FUNCTION_NAME},msg=${msg}`);
-  return new Error(msg);
-}
+let rh = null;
 
 const parseEvent = (event) => {
   if(event &&
@@ -20,8 +13,8 @@ const parseEvent = (event) => {
     event.Records[0].Sns.Message) {
       try {
         const data = JSON.parse(event.Records[0].Sns.Message);
-        const mfaCode = data.messageBody.match(config.MFA_TOKEN_PATTERN)[0];
-        return handleResult(config.SNS_EVENT_RECEIVED, mfaCode);
+        const mfa_code = data.messageBody.match(config.MFA_TOKEN_PATTERN)[0];
+        return handleResult(config.SNS_EVENT_RECEIVED, mfa_code);
       } catch {
         throw handleFailure(config.INVALID_SNS_MESSAGE);
       }
@@ -42,9 +35,20 @@ const retrieveCredentials = async () => {
   }
 }
 
+const connect = async (mfa_code) => {
+  const creds = (mfa_code) ? { mfa_code, ...credentials } : credentials;
+  try {
+    rh = new robinhood(creds);
+    await sleep(3);
+  } catch {
+    
+  }
+}
+
 exports.handler = async (event) => {
   const mfa_code = parseEvent(event);
   await retrieveCredentials();
+  connect(mfa_code);
   
   return handleResult(config.EXECUTION_SUCCESS);
 }
