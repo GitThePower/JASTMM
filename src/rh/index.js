@@ -1,37 +1,21 @@
-const AWS = require('aws-sdk');
-const { handleFailure, handleResult, sleep } = require('../utils');
-const robinhood = require('./api');
+const robinhood = require('ar-eych');
+const { getSecretValue, parsePinpointSNSMessage } = require('../utils/aws');
+const { handleFailure, handleResult, sleep } = require('../utils/helpers');
 const config = require('./config');
 let credentials = null;
 let rh = null;
 
 const parseEvent = (event) => {
-  if(event &&
-    event.Records &&
-    event.Records[0] &&
-    event.Records[0].Sns &&
-    event.Records[0].Sns.Message) {
-      try {
-        const data = JSON.parse(event.Records[0].Sns.Message);
-        const mfa_code = data.messageBody.match(config.MFA_TOKEN_PATTERN)[0];
-        return handleResult(config.SNS_EVENT_RECEIVED, mfa_code);
-      } catch {
-        throw handleFailure(config.INVALID_SNS_MESSAGE);
-      }
-  } else {
-    return handleResult(config.SCHEDULED_EXECUTION);
-  }
+  if (event && !event.Records) return handleResult(config.SCHEDULED_EXECUTION);
+
+  try { return handleResult(config.SNS_EVENT_RECEIVED, parsePinpointSNSMessage(event, config.MFA_TOKEN_PATTERN)); }
+  catch { throw handleFailure(config.INVALID_SNS_MESSAGE); }
 }
 
 const retrieveCredentials = async () => {
-  const SM = new AWS.SecretsManager();
   if (!credentials) {
-    try {
-      const secretPromise = await SM.getSecretValue({ SecretId: process.env.RH_CREDENTIALS_ARN }).promise();
-      credentials = JSON.parse(secretPromise.SecretString);
-    } catch {
-      throw handleFailure(config.SECRETS_MANANGER_ERROR);
-    }
+    try { credentials = await getSecretValue(process.env.RH_CREDENTIALS_ARN); }
+    catch { throw handleFailure(config.SECRETS_MANANGER_ERROR); }
   }
 }
 
@@ -40,15 +24,13 @@ const connect = async (mfa_code) => {
   try {
     rh = new robinhood(creds);
     await sleep(3);
-  } catch {
-    
-  }
+  } catch { return handleResult(config.RH_CONNECTION_ERROR); }
 }
 
 exports.handler = async (event) => {
   const mfa_code = parseEvent(event);
   await retrieveCredentials();
-  connect(mfa_code);
-  
+  // connect(mfa_code);
+
   return handleResult(config.EXECUTION_SUCCESS);
 }

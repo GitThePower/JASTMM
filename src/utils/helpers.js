@@ -1,10 +1,10 @@
 const handleFailure = (msg) => {
-  console.error(`func=${config.FUNCTION_NAME},msg=${msg}`);
+  console.error(msg);
   return new Error(msg);
 }
 
 const handleResult = (msg, res) => {
-  console.log(`func=${config.FUNCTION_NAME},msg=${msg}`);
+  console.log(msg);
   return res;
 }
 

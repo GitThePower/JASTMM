@@ -1,5 +1,4 @@
 module.exports = {
-    FUNCTION_NAME: 'rhLambda',
     MFA_TOKEN_PATTERN: /^[0-9]{6}$/,
 
     // Success Messages
@@ -9,5 +8,6 @@ module.exports = {
 
     // Error Messages
     INVALID_SNS_MESSAGE: 'invalid sns event',
-    SECRETS_MANANGER_ERROR: 'unable to get secret value'
+    SECRETS_MANANGER_ERROR: 'unable to get secret value',
+    RH_CONNECTION_ERROR: 'unable to connect to rh'
 }
