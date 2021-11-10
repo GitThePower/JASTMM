@@ -4,7 +4,7 @@ module.exports = {
     // Success Messages
     SCHEDULED_EXECUTION: 'scheduled execution',
     SNS_EVENT_RECEIVED: 'sns event received',
-    SECRET_RETRIEVED: 'secret successfully retried from secrets manager',
+    SECRET_RETRIEVED: 'secret successfully retrieved from secrets manager',
     RH_CONNECTION_SUCCESS: 'connected to rh',
     EXECUTION_SUCCESS: 'success',
 
