@@ -3,7 +3,6 @@ module.exports = {
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '/test/',
-    '/src/rh/api'
   ],
   roots: ['<rootDir>/test'],
   testEnvironment: 'node',
