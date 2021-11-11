@@ -1,5 +1,5 @@
 module.exports = {
-    MFA_TOKEN_PATTERN: /^[0-9]{6}$/,
+    MFA_TOKEN_PATTERN: /(?<![0-9])[0-9]{6}(?![0-9])/,
 
     // Success Messages
     SCHEDULED_EXECUTION: 'scheduled execution',

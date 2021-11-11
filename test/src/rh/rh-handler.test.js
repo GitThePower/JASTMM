@@ -30,11 +30,11 @@ test('lambda should throw error for malformed sns event', async () => {
   try { await executeLambda(lambdaFunc, sns_event_malformed); }
   catch (e) { expect(e.errorMessage).toEqual(rhConfig.INVALID_SNS_MESSAGE); }
 
-  sns_event_malformed.Records[0].Sns.Message = '{"messageBody": "12345"}';
+  sns_event_malformed.Records[0].Sns.Message = '{"messageBody": "blah blah blah: 12345. Blah; blah."}';
   try { await executeLambda(lambdaFunc, sns_event_malformed); }
   catch (e) { expect(e.errorMessage).toEqual(rhConfig.INVALID_SNS_MESSAGE); }
 
-  sns_event_malformed.Records[0].Sns.Message = '{"messageBody": "1234567"}';
+  sns_event_malformed.Records[0].Sns.Message = '{"messageBody": "blah blah blah: 1234567. Blah; blah."}';
   try { await executeLambda(lambdaFunc, sns_event_malformed); }
   catch (e) { expect(e.errorMessage).toEqual(rhConfig.INVALID_SNS_MESSAGE); }
 
