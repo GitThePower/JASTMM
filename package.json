@@ -47,7 +47,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "ar-eych": "^1.0.0",
+    "ar-eych": "^1.0.1",
     "aws-sdk": "^2.973.0",
     "source-map-support": "^0.5.19"
   }
