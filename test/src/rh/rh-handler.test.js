@@ -3,7 +3,7 @@ const lambdaFunc = require('../../../src/rh/index');
 const rhApi = require('../../../src/rh/api');
 const rhConfig = require('../../../src/rh/config');
 const { copy, executeLambda } = require('../test-helpers');
-const { EVENT_SCHEDULED, EVENT_SNS, SECRET } = require('./test-constants');
+const { EVENT_SCHEDULED, EVENT_SNS, SECRET } = require('./rh-constants');
 
 process.env.RH_CREDENTIALS_ARN = 'someArn';
 
