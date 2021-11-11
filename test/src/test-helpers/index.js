@@ -8,6 +8,8 @@ const executeLambda = (lambdaFunc, event) => lambdaLocal.execute({
     verboseLevel: 0
 });
 
+const oressa = () => 's3xy';
+
 module.exports = {
     copy,
     executeLambda
