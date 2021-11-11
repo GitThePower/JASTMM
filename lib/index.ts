@@ -1,4 +1,4 @@
-import { App, Stack, StackProps } from '@aws-cdk/core';
+import { App, Duration, Stack, StackProps } from '@aws-cdk/core';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
 import { Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs'
@@ -54,7 +54,8 @@ export class JastmmStack extends Stack {
       memorySize: 128,
       retryAttempts: 0,
       role: rhLambdaRole,
-      runtime: Runtime.NODEJS_14_X
+      runtime: Runtime.NODEJS_14_X,
+      timeout: Duration.seconds(10)
     });
 
     // SNS Topic for receiving MFA texts
