@@ -1,14 +1,75 @@
-import * as cdk from '@aws-cdk/core';
+import { App, Duration, Stack, StackProps } from '@aws-cdk/core';
+import { Secret } from '@aws-cdk/aws-secretsmanager';
+import { Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs'
+import { Runtime } from '@aws-cdk/aws-lambda';
+import { Topic } from '@aws-cdk/aws-sns';
+import { LambdaSubscription } from '@aws-cdk/aws-sns-subscriptions';
 
-export interface DeployProps {
-  // Define construct properties here
+interface JastmmStackProps extends StackProps {
+  rhPassword: string;
+  rhUsername: string;
+  stackName: string;
 }
 
-export class Deploy extends cdk.Construct {
+export class JastmmStack extends Stack {
 
-  constructor(scope: cdk.Construct, id: string, props: DeployProps = {}) {
+  constructor(scope: App, id: string, props: JastmmStackProps) {
     super(scope, id);
 
-    // Define construct contents here
+    // Credentials stored in AWS Secrets Manager
+    const rhCreds = new Secret(this, 'JastmmRhSecrets', {
+      generateSecretString: {
+        secretStringTemplate: JSON.stringify({
+          password: props.rhPassword,
+          username: props.rhUsername
+        }),
+        generateStringKey: 'placeHolder',
+      },
+      secretName: 'rh-credentials'
+    });
+
+    // Role for Lambda Function
+    const rhLambdaRole = new Role(this, 'JastmmRhLambdaRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      roleName: `${props.stackName}-rh-lambda-role`
+    });
+    rhLambdaRole.addManagedPolicy(  // Add the Lambda Basic Execution Policy to the Role
+      ManagedPolicy.fromAwsManagedPolicyName(
+        'service-role/AWSLambdaBasicExecutionRole',
+      ),
+    );
+    rhCreds.grantRead(rhLambdaRole);  // Grant the Role Access to read the credentials
+    rhCreds.grantWrite(rhLambdaRole); // Grant the Role Access to update the credentials
+
+    // Lambda Function
+    const rhLambda = new NodejsFunction(this, 'JastmmRhLambda', {
+      depsLockFilePath: 'package-lock.json',
+      entry: 'src/rh/index.js',
+      environment: {
+        RH_CREDENTIALS_ARN: rhCreds.secretArn
+      },
+      functionName: `${props.stackName}-rh-lambda`,
+      handler: 'handler',
+      memorySize: 128,
+      retryAttempts: 0,
+      role: rhLambdaRole,
+      runtime: Runtime.NODEJS_14_X,
+      timeout: Duration.seconds(10)
+    });
+
+    // SNS Topic for receiving MFA texts
+    const rhMfaTopic = new Topic(this, 'JastmmRhMfaTopic', {
+      displayName: 'JastmmRhMfaTopic',
+      topicName: `${props.stackName}-rh-mfa-topic`
+    });
+    rhMfaTopic.addToResourcePolicy(new PolicyStatement({ // Enable receive SMS
+      actions: ['sns:Publish'],
+      effect: Effect.ALLOW,
+      principals: [new ServicePrincipal('mobile.amazonaws.com')],
+      resources: ['*']
+    }));
+    rhMfaTopic.addSubscription(new LambdaSubscription(rhLambda)); // Send received messages to lambda
   }
 }
+
