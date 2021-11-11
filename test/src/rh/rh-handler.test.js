@@ -1,60 +1,92 @@
 const AWS = require('aws-sdk-mock');
-const lambdaLocal = require('lambda-local');
 const lambdaFunc = require('../../../src/rh/index');
+const rhApi = require('../../../src/rh/api');
+const rhConfig = require('../../../src/rh/config');
+const { copy, executeLambda } = require('../test-helpers');
+const { EVENT_SCHEDULED, EVENT_SNS, SECRET } = require('./rh-constants');
 
 process.env.RH_CREDENTIALS_ARN = 'someArn';
-const event = {};
-const testSecret = {
-    ARN: 'arn:aws:secretsmanager:us-east-1:123456789012:secret:TestSecret-a1b2c3',
-    CreatedDate: 1.523477145713E9,
-    Name: 'TestSecret',
-    SecretString: '{\n  "username":"testUsername",\n  "password":"testPassword"\n}\n',
-    VersionId: 'EXAMPLE1-90ab-cdef-fedc-ba987SECRET1'
-};
 
 afterEach(() => {
-    AWS.restore();
+  AWS.restore();
+  jest.clearAllMocks();
+});
+
+/**
+ * ERRORS
+ */
+test('lambda should throw error for malformed sns event', async () => {
+  const sns_event_malformed = copy(EVENT_SNS);
+  AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
+    cb(null, SECRET)
+  });
+  let connectSpy = jest.spyOn(rhApi, 'connect').mockImplementation(jest.fn(() => { }));
+
+  sns_event_malformed.Records[0].Sns.Message = 'some string message';
+  try { await executeLambda(lambdaFunc, sns_event_malformed); }
+  catch (e) { expect(e.errorMessage).toEqual(rhConfig.INVALID_SNS_MESSAGE); }
+
+  sns_event_malformed.Records[0].Sns.Message = '{"messageBody": "some non-numerical message"}';
+  try { await executeLambda(lambdaFunc, sns_event_malformed); }
+  catch (e) { expect(e.errorMessage).toEqual(rhConfig.INVALID_SNS_MESSAGE); }
+
+  sns_event_malformed.Records[0].Sns.Message = '{"messageBody": "blah blah blah: 12345. Blah; blah."}';
+  try { await executeLambda(lambdaFunc, sns_event_malformed); }
+  catch (e) { expect(e.errorMessage).toEqual(rhConfig.INVALID_SNS_MESSAGE); }
+
+  sns_event_malformed.Records[0].Sns.Message = '{"messageBody": "blah blah blah: 1234567. Blah; blah."}';
+  try { await executeLambda(lambdaFunc, sns_event_malformed); }
+  catch (e) { expect(e.errorMessage).toEqual(rhConfig.INVALID_SNS_MESSAGE); }
+
+  expect(connectSpy).toHaveBeenCalledTimes(0);
 });
 
 test('lambda should throw error when unable to get secret', async () => {
-    AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
-        cb('Secret Unvailable.', null)
-    });
+  AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
+    cb('Secret Unvailable.', null)
+  });
+  let connectSpy = jest.spyOn(rhApi, 'connect').mockImplementation(jest.fn(() => { }));
 
-    try {
-        const result = await lambdaLocal.execute({
-            event,
-            lambdaFunc,
-            verboseLevel: 0
-        });
-        expect(result).toBeFalsy();
-    } catch (e) {
-        expect(e.errorMessage).toEqual('Unable to get Secret Value.');
-    }
+  try {
+    await executeLambda(lambdaFunc, EVENT_SCHEDULED);
+  } catch (e) {
+    expect(e.errorMessage).toEqual(rhConfig.SECRETS_MANANGER_ERROR);
+    expect(connectSpy).toHaveBeenCalledTimes(0);
+  }
 });
 
-test('lambda should get and cache credentials from secrets manager', async () => {
-    AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
-        cb(null, testSecret)
-    });
+/**
+ * SUCCESSES
+ */
+test('lambda return should not be defined', async () => {
+  AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
+    cb(null, SECRET)
+  });
+  let connectSpy = jest.spyOn(rhApi, 'connect').mockImplementation(jest.fn(() => { }));
 
-    const response1 = await lambdaLocal.execute({
-        event,
-        lambdaFunc,
-        verboseLevel: 0
-    });
+  const result = await executeLambda(lambdaFunc, EVENT_SCHEDULED);
+  expect(result).toBeUndefined();
+  expect(connectSpy).toHaveBeenCalledTimes(1);
+});
 
-    expect(response1.username).toEqual('testUsername');
-    expect(response1.password).toEqual('testPassword');
+test('lambda should succeed for sns event', async () => {
+  AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
+    cb(null, SECRET)
+  });
+  let connectSpy = jest.spyOn(rhApi, 'connect').mockImplementation(jest.fn(() => { }));
 
-    AWS.restore();
+  await executeLambda(lambdaFunc, EVENT_SNS);
+  expect(connectSpy).toHaveBeenCalledTimes(1);
+});
 
-    const response2 = await lambdaLocal.execute({
-        event,
-        lambdaFunc,
-        verboseLevel: 0
-    });
+test('lambda should cache credentials from secrets manager', async () => {
+  AWS.mock('SecretsManager', 'getSecretValue', (params, cb) => {
+    cb(null, SECRET)
+  });
+  let connectSpy = jest.spyOn(rhApi, 'connect').mockImplementation(jest.fn(() => { }));
 
-    expect(response2.username).toEqual('testUsername');
-    expect(response2.password).toEqual('testPassword');
+  await executeLambda(lambdaFunc, EVENT_SCHEDULED);
+  AWS.restore();
+  await executeLambda(lambdaFunc, EVENT_SCHEDULED);
+  expect(connectSpy).toHaveBeenCalledTimes(2);
 });
