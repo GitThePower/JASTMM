@@ -3,6 +3,7 @@ import { Secret } from '@aws-cdk/aws-secretsmanager';
 import { Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs'
 import { Runtime } from '@aws-cdk/aws-lambda';
+import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Topic } from '@aws-cdk/aws-sns';
 import { LambdaSubscription } from '@aws-cdk/aws-sns-subscriptions';
 
@@ -51,6 +52,7 @@ export class JastmmStack extends Stack {
       },
       functionName: `${props.stackName}-rh-lambda`,
       handler: 'handler',
+      logRetention: RetentionDays.ONE_DAY,
       memorySize: 128,
       retryAttempts: 0,
       role: rhLambdaRole,
