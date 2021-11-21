@@ -1,3 +1,6 @@
+# This Repository is Archived!
+Moving this project to AWS-Codecommit and will no longer be uploading changes to github
+
 # JASTMM
 Just another scheme to make money (legally through the power of investing!).
 
